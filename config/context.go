@@ -2,6 +2,7 @@ package config
 
 import (
 	"context"
+	"fmt"
 	"time"
 
 	"math/rand"
@@ -24,7 +25,7 @@ func SetContextCorrelationId(ctx context.Context, value string) context.Context 
 		id[idx] = chars[n]
 	}
 
-	newctx := context.WithValue(ctx, CorrelationContextKey("cid"), string(id))
+	newctx := context.WithValue(ctx, CorrelationContextKey("cid"), fmt.Sprintf("%s-%s", string(id), value))
 
 	// if the created time is unset then set it. test for -1 as 0 could be
 	// a symptom of a default unset value

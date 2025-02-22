@@ -4,6 +4,7 @@ package config
 
 import (
 	"context"
+	"strings"
 	"testing"
 )
 
@@ -26,7 +27,7 @@ func TestCorrelationIdContext(t *testing.T) {
 		ctx := SetContextCorrelationId(context.Background(), tc.value)
 		result := GetContextCorrelationId(ctx)
 
-		if tc.value != result {
+		if !strings.Contains(result, tc.value) {
 			t.Error(tc.description)
 		}
 	}
@@ -35,12 +36,12 @@ func TestCorrelationIdContext(t *testing.T) {
 func TestAppendToCid(t *testing.T) {
 
 	ctx := SetContextCorrelationId(context.Background(), "testId")
-	if "testId" != GetContextCorrelationId(ctx) {
+	if !strings.Contains(GetContextCorrelationId(ctx), "testId") {
 		t.Error("initial cid")
 	}
 
 	ctx = AppendToContextCorrelationId(ctx, "someText")
-	if "testId-someText" != GetContextCorrelationId(ctx) {
+	if !strings.Contains(GetContextCorrelationId(ctx), "testId-someText") {
 		t.Error("appended cid")
 	}
 }
