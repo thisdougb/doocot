@@ -1,13 +1,13 @@
 # This Makefile enables one-line test, build, and binary signing (Mac) Go
-# apps on many platforms. It assumes current directory is the app name.
+# apps on many platforms.
 #
 # For signing and notarizing on Mac, the keychain profile name should be
-# the aop (dir) name. The codesigning identity should already exist.
+# the aop (module) name. The codesigning identity should already exist.
 #
 # This is always run as part of CI, so .PHONY doesn't really make sense
 # here.
 
-APP=$(shell pwd | rev | cut -f1 -d'/' | rev)
+APP=$(shell grep module go.mod | rev | cut -f1 -d'/' | rev)
 
 # Apple doesn't write tools for automateed consumption, so this works but may not be futureproof
 CODESIGNINGID=$(shell security find-identity -v -p codesigning | grep -Eo '[0-9A-Z]{40}')
