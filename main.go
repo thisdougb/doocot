@@ -16,8 +16,8 @@ var (
 )
 
 const doocotUsage = `Usage:
-  doocot put [-v] [-words] [-host <name>] <data>
-  doocot get [-v] [-host <name>] <id>`
+  doocot put [options] <data>
+  doocot get [options] <id>`
 
 func main() {
 
@@ -28,7 +28,6 @@ func main() {
 	// high level usage if no subcommand is given
 	if len(os.Args) < 2 {
 		fmt.Println(doocotUsage)
-
 		os.Exit(1)
 	}
 
@@ -36,12 +35,10 @@ func main() {
 
 	case "put":
 		put(ctx, os.Args[2:])
-
 		os.Exit(0)
 
 	case "get":
 		get(ctx, os.Args[2:])
-
 		os.Exit(0)
 
 	default:
