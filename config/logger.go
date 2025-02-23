@@ -20,7 +20,6 @@ func LogDebug(ctx context.Context, msg string) {
 	}
 }
 
-// Private methods
 func writeToLog(ctx context.Context, severity string, msg string) {
 
 	fmt.Printf("%s +%s %s\n",

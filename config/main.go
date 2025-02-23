@@ -9,8 +9,8 @@ import (
 )
 
 var defaultValues = map[string]interface{}{
-	"DEBUG":       true,
-	"DOOCOT_HOST": "http://localhost:8080",
+	"DEBUG":       false,
+	"DOOCOT_HOST": "https://doocot.sh",
 }
 
 func StringValue(key string) string {

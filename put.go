@@ -23,7 +23,7 @@ Usage:
 Options:
   -v           verbose commentary
   -words       return a word passphrase link rather than hex string
-  -once        expire the data after it has been read once
+  -once        expire the data immediately after first access
   -json        output in json format
 
 Example:
@@ -43,7 +43,7 @@ func put(ctx context.Context, args []string) {
 
 	putDataUrl, _ := url.JoinPath(config.StringValue("DOOCOT_HOST"), "/api/data")
 
-	fs := flag.NewFlagSet("share", flag.ExitOnError)
+	fs := flag.NewFlagSet("put", flag.ExitOnError)
 	fs.Usage = func() { fmt.Print(putUsage) }
 
 	verbose := fs.Bool("v", false, "verbose")
@@ -95,6 +95,10 @@ func put(ctx context.Context, args []string) {
 
 	req.Header.Set("Content-Type", "application/json")
 
+	config.LogDebug(ctx,
+		fmt.Sprintf("Making request %s://%s%s (body size %d bytes)",
+			req.URL.Scheme, req.URL.Host, req.URL.Path, len(requestDataJsonBytes)))
+
 	resp, err := http.DefaultClient.Do(req)
 	if err != nil {
 		config.LogError(ctx, fmt.Sprintf("Failed making api request: %s", err.Error()))
@@ -117,10 +121,23 @@ func put(ctx context.Context, args []string) {
 		os.Exit(1)
 	}
 
+	config.LogDebug(ctx, fmt.Sprintf("Received response (body size %d bytes)", len(bodyBytes)))
+
 	type RespData struct {
-		Id      string `json:"id"`
-		Url     string `json:"url"`
-		Expires string `json:"expires"`
+		Id         string `json:"id"`
+		Url        string `json:"url"`
+		Expires    string `json:"expires"`
+		Encryption struct {
+			Algorithm string `json:"algorithm"`
+			Mode      string `json:"mode"`
+		} `json:"encryption"`
+		Scrypt struct {
+			Salt      []byte `json:"salt"`       // for passphrase use
+			N         int    `json:"n"`          // for passphrase use
+			R         int    `json:"r"`          // for passphrase use
+			P         int    `json:"p"`          // for passphrase use
+			KeyLength int    `json:"key_length"` // for passphrase use
+		} `json:"scrypt"`
 	}
 
 	respData := &RespData{}
@@ -129,6 +146,12 @@ func put(ctx context.Context, args []string) {
 		config.LogError(ctx, fmt.Sprintf("Failed to read api response: %s", err.Error()))
 		os.Exit(1)
 	}
+
+	config.LogDebug(ctx, fmt.Sprintf("Data passphrase: %s", respData.Id))
+	config.LogDebug(ctx, fmt.Sprintf("Data url: %s", respData.Url))
+	config.LogDebug(ctx, fmt.Sprintf("Data expires: %s", respData.Expires))
+	config.LogDebug(ctx, fmt.Sprintf("Encryption: %+v", respData.Encryption))
+	config.LogDebug(ctx, fmt.Sprintf("Scrypt: %+v", respData.Scrypt))
 
 	if *jsonOut {
 		fmt.Print(string(bodyBytes))
