@@ -49,11 +49,11 @@ func put(ctx context.Context, args []string) {
 	fs := flag.NewFlagSet("put", flag.ExitOnError)
 	fs.Usage = func() { fmt.Print(putUsage) }
 
-	verbose := fs.Bool("v", false, "verbose")
-	create := fs.Int("create", 0, "create")
-	once := fs.Bool("once", false, "once")
-	words := fs.Bool("words", false, "words")
-	jsonOut := fs.Bool("json", false, "json")
+	verbose := fs.Bool("v", false, "enable verbose commentary")
+	create := fs.Int("create", 0, "remote creates a rand data value of length n")
+	once := fs.Bool("once", false, "expire data after it is read once")
+	words := fs.Bool("words", false, "return word passphrase instead of hex str")
+	jsonOut := fs.Bool("json", false, "output in json format")
 	fs.Parse(args)
 
 	if *verbose {
