@@ -1,6 +1,16 @@
 ## NAME
 doocot - ad hoc, securely.
 
+## INSTALL
+
+If you have Go installed:
+
+```
+go install github.com/thisdougb/doocot
+```
+
+Otherwise compiled releaes for Mac, Linux, and FreeBSD are availble at [doocot.sh/releases](https://doocot.sh/releases).
+
 ## SYNOPSIS
 
 <pre>
