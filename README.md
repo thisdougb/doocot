@@ -9,7 +9,7 @@ If you have Go installed:
 go install github.com/thisdougb/doocot
 ```
 
-Otherwise compiled releaes for Mac, Linux, and FreeBSD are availble at [doocot.sh/releases](https://doocot.sh/releases).
+Otherwise compiled releases for Mac, Linux, and FreeBSD are available at [doocot.sh/releases](https://doocot.sh/releases).
 
 ## SYNOPSIS
 
@@ -28,7 +28,6 @@ This is enough for sharing API keys, passwords, etc.
 It is encrypted in transit and at-rest whilst in the backend, then expired permanently after 15 minutes.
 
 The **put** subcommand returns an identifier that is used to retrieve the data. This is the only instance of the (proxy) decryption key in existance. It is not possible to recover the encrypted data if the relevant identifier is lost.
-
 
 To be CLI friendly, the response output is an easy copy/paste as a **doocot** **get** command and as a curl command.
 
@@ -76,7 +75,7 @@ alice $ doocot put the api key is 564231f5bbe0a7e2833fe6dc1b66a40e9d7960229cd704
 slight-step-zoo-flock
 ```
 
-Over some chat service Alice messages Bob the id 'slight-step-zoo-flock'.
+Alice messages Bob the id 'slight-step-zoo-flock', using a chat service such as Slack or Teams.
 Bob retrieves the api key:
 
 ```
@@ -110,7 +109,7 @@ wSDvXq9AT5EIhoqelzg0
 
 The public-use backend service at [doocot.sh](https://doocot.sh).
 
-Compiled releaes for Mac, Linux, and FreeBSD are availble at [doocot.sh/releases](https://doocot.sh/releases).
+Compiled releases for Mac, Linux, and FreeBSD are availble at [doocot.sh/releases](https://doocot.sh/releases).
 
 ## AUTHORS
 
