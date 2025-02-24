@@ -75,7 +75,7 @@ The doocot utility exits 0 on success, and > 0 if an error occurs.
 Alice wants to send Bob an API key for a test account of some new service:
 
 ```
-alice $ doocot put the api key is 564231f5bbe0a7e2833fe6dc1b66a40e9d7960229cd7040b23b4c2d4bf6eec43
+alice $ doocot put -words the api key is 564231f5bbe0a7e2833fe6dc1b66a40e9d7960229cd7040b23b4c2d4bf6eec43
 slight-step-zoo-flock
 ```
 
