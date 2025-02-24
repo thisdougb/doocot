@@ -40,7 +40,7 @@ The following options are available:
                                                                          
   <strong>-once </n></strong>       expire the data immediately after it is first accessed
 
-  <strong>-words</strong>       return a more human-friendly word passphrase link rather than hex string
+  <strong>-words</strong>       return a more human-friendly passphrase link rather than hex string
 
   <strong>-json</strong>        output in json format
 
