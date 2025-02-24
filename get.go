@@ -32,7 +32,7 @@ func get(ctx context.Context, args []string) {
 	fs := flag.NewFlagSet("get", flag.ExitOnError)
 	fs.Usage = func() { fmt.Print(getUsage) }
 
-	raw := fs.Bool("raw", false, "raw")
+	raw := fs.Bool("raw", false, "return the raw data as stored remotely")
 	fs.Parse(args)
 
 	if *raw {

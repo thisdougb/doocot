@@ -21,10 +21,11 @@ Usage:
   doocot put [options] <data>
 
 Options:
-  -v           verbose commentary
-  -words       return a word passphrase link rather than hex string
-  -once        expire the data immediately after first access
-  -json        output in json format
+  -v             verbose commentary
+  -create <n>    generate a new secret of length n (0 < n <= 100)
+  -once          expire the data immediately after first access
+  -words         return a word passphrase link rather than hex string
+  -json          output in json format
 
 Example:
   $ doocot put -words this is my secret text
@@ -34,10 +35,12 @@ Example:
 
 func put(ctx context.Context, args []string) {
 
+	// we want the samllest request data size, so omit empty or unused fields
 	type RequestData struct {
-		DataValue     string `json:"data_value"`
-		Once          bool   `json:"once"`
-		Words         bool   `json:"words"`
+		DataValue     string `json:"data_value,omitempty"`
+		Create        int    `json:"create,omitempty,omitzero"`
+		Once          *bool  `json:"once,omitempty"`  // as ptr lets us omitempty
+		Words         *bool  `json:"words,omitempty"` // as ptr lets us omitempty
 		ClientVersion string `json:"client_version"`
 	}
 
@@ -46,10 +49,11 @@ func put(ctx context.Context, args []string) {
 	fs := flag.NewFlagSet("put", flag.ExitOnError)
 	fs.Usage = func() { fmt.Print(putUsage) }
 
-	verbose := fs.Bool("v", false, "verbose")
-	words := fs.Bool("words", false, "words")
-	once := fs.Bool("once", false, "once")
-	jsonOut := fs.Bool("json", false, "json")
+	verbose := fs.Bool("v", false, "enable verbose commentary")
+	create := fs.Int("create", 0, "remote creates a rand data value of length n")
+	once := fs.Bool("once", false, "expire data after it is read once")
+	words := fs.Bool("words", false, "return word passphrase instead of hex str")
+	jsonOut := fs.Bool("json", false, "output in json format")
 	fs.Parse(args)
 
 	if *verbose {
@@ -59,19 +63,30 @@ func put(ctx context.Context, args []string) {
 	config.LogDebug(ctx,
 		fmt.Sprintf("Using backend %s", config.StringValue("DOOCOT_HOST")))
 
-	if len(fs.Args()) == 0 {
-		fs.Usage()
-		os.Exit(1)
-	}
-
-	// the data to send is the rest of the command line after the flags args
-	value := strings.Join(fs.Args(), " ")
-
 	var requestData RequestData
 
-	requestData.DataValue = value
-	requestData.Once = *once
-	requestData.Words = *words
+	// create is mutually exclusive with a supplied data value.
+	if *create > 0 {
+		requestData.Create = *create
+	} else {
+		// get the supplied data value. the data value is the rest of the
+		// command line after the flags args.
+		if len(fs.Args()) == 0 {
+			fs.Usage()
+			os.Exit(1)
+		}
+
+		value := strings.Join(fs.Args(), " ")
+		requestData.DataValue = value
+	}
+
+	// we only need to send the bool values if they are true
+	if *once {
+		requestData.Once = once
+	}
+	if *words {
+		requestData.Words = words
+	}
 	requestData.ClientVersion = Version
 
 	requestDataJsonBytes, err := json.Marshal(requestData)
