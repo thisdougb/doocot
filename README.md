@@ -99,7 +99,7 @@ $ cat breakglass_prod_access.yml
   community.postgresql.postgresql_user:
     db: prod
     name: "devops-{{ ticket }}"
-    password: {{ lookup('ansible.builtin.url', $passwd_url) }}
+    password: {{ lookup('ansible.builtin.url', passwd_url) }}
     priv: "CONNECT/products:SELECT"
     expires: "{{ '%Y-%m-%d %H:%m:00' | strftime((ansible_date_time.epoch|int) + (60*60)) }}"
 
