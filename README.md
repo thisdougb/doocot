@@ -89,25 +89,54 @@ the api key is 564231f5bbe0a7e2833fe6dc1b66a40e9d7960229cd7040b23b4c2d4bf6eec43
 
 ### Safer CI and automation
 
-Creating system passwords should be really easy, but also easy to keep them out of your DevOps tool logs.
+Here is a snippet of Ansible where we automate the creation of a time-limited database user, in order to troubleshoot a production issue.
 
-Here, task1 asks the backend to automatically generate a new password and parses the json response to get the identifier url.
-It doesn't matter how high the logging is, this url is useless after the fact.
-
-```
-task1 $ new_password_url=$(doocot put -once -json -create 20 | jq -r '.url'); echo $new_password_url
-https://doocot.sh/api/data/6e77fcd193db295a23254fedf41ee2c5dcf69eeb7401445d08f7d7d947d96419
-```
-
-Task2 can read the new password without worrying about leaking sensitive data to logs.
-On creation the **-once** flag was set, so the secret is expired after it is read the first time.
+No matter how many layers of tooling this runs under (Jenkins, GitLab, etc), the ad hoc password string won't show up in your log history.
 
 ```
-task2 $ new_password=$(curl "$new_password_url"); echo $new_password
-wSDvXq9AT5EIhoqelzg0
+$ cat breakglass_prod_access.yml
+- name: Create temp postgres user for DevOps access (expires +1 hour)
+  community.postgresql.postgresql_user:
+    db: prod
+    name: "devops-{{ ticket }}"
+    password: {{ lookup('ansible.builtin.url', $passwd_url) }}
+    priv: "CONNECT/products:SELECT"
+    expires: "{{ '%Y-%m-%d %H:%m:00' | strftime((ansible_date_time.epoch|int) + (60*60)) }}"
+
+- name: Support ticket username
+  ansible.builtin.debug:
+    msg: "devops-{{ ticket }}"
+  delegate_to: localhost
+
+- name: Password location
+  ansible.builtin.debug:
+    msg: "{{ lookup('ansible.builtin.url', passwd_url) }}"
+  delegate_to: localhost
 ```
 
-*(The echo command here is just for clarity.)*
+As part of your compliance incident-workflow (suitably restricted), the assigned engineer can gain access without sensitive data being compromised.
+And the password link automatically expires are 15 minutes.
+
+```
+$ ansible-playbook breakglass_prod_access.yml \
+    --extra-vars "passwd_url=$(doocot put -json -create 20 | jq -r '.url') ticket=OPS-1234"
+
+TASK [Create temp postgres user for DevOps access (expires +1 hour)] *********************************************
+changed: [93.43.20.57]
+
+TASK [Support ticket username] ***********************************************************************************
+ok: [13.40.60.56 -> localhost] => {
+    "msg": "devops-OPS-1234"
+}
+
+TASK [Password location] *****************************************************************************************
+ok: [13.40.60.56 -> localhost] => {
+    "msg": "https://doocot.sh/api/data/6e77fcd193db295a23254fedf41ee2c5dcf69eeb7401445d08f7d7d947d96419"
+}
+
+PLAY RECAP *******************************************************************************************************
+93.43.20.57                 : ok=3   changed=3    unreachable=0    failed=0    skipped=0    rescued=0    ignored=0   
+```
 
 ## SEE ALSO
 
