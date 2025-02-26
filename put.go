@@ -60,6 +60,8 @@ func put(ctx context.Context, args []string) {
 		ctx = config.SetContextDebug(ctx, *verbose)
 	}
 
+	config.LogDebug(ctx, fmt.Sprintf("doocot version: %s", Version))
+
 	config.LogDebug(ctx,
 		fmt.Sprintf("Using backend %s", config.StringValue("DOOCOT_HOST")))
 
