@@ -21,7 +21,7 @@ Usage:
 
 ## DESCRIPTION
 
-The **doocot** utility provides a convenient interface to the Doocot API. It simplifies securely sharing ad-hoc data between people and systems.
+The **doocot** utility provides a convenient interface to the [Doocot](https://doocot.sh/) API. It simplifies securely sharing ad-hoc data between people and systems.
 
 Using the free public backend, <i>data</i> is limited to 100 bytes.
 This is enough for sharing API keys, passwords, etc.
