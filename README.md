@@ -5,7 +5,7 @@ doocot - ad hoc, securely.
 
 <pre>
 Usage:
-  doocot put [-v] [-once] [-words] [-json] { -create <i>n</i> | <i>data</i> }
+  doocot put [-v] [-once] [-words] [-lang <i>code</i>] [-json] { -create <i>n</i> | <i>data</i> }
   doocot get [-raw] <i>id</i>
 </pre>
 
@@ -33,6 +33,8 @@ The following options are available:
 
   <strong>-words</strong>       return a more human-friendly word passphrase link rather than hex string
 
+  <strong>-lang <i>code</i></strong>  return words in a different language (ISO 630, such as 'fr' for french.)
+
   <strong>-json</strong>        output in json format
 
   <strong>-raw</strong>         get the raw data from the backend, if your curious about secure storage
@@ -42,6 +44,8 @@ The following options are available:
 Secrets in the public Doocot backend are expired automatically, after 15 minutes. 
 
 There is no data retention. Using **doocot** to retrieve an expired (or non-existant) secret returns "Not Found".
+
+Currently the backend supports language codes fr, es, and de.
 
 ### Doocot Backend Service
 
