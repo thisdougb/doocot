@@ -42,7 +42,7 @@ The following options are available:
 
   <strong>-words</strong>       return a more human-friendly passphrase link rather than hex string
 
-  <strong>-lang <i>code</i></strong>  return words in a different language (ISO 630, such as 'fr' for french.)
+  <strong>-lang <i>code</i></strong>   return words in a different language (ISO 630, such as 'fr' for french.)
 
   <strong>-json</strong>        output in json format
 
