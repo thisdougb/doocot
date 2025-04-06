@@ -18,14 +18,14 @@ COMMIT=$(shell git rev-parse --short HEAD)
 DATE=$(shell date '+%Y-%m-%d %H:%M:%S')
 	
 # Inject these values into the compliled binary
-LDFLAGS=-X 'main.version=$(VERSION)' -X 'main.commit=$(COMMIT)' -X 'main.date=$(DATE)'
+LDFLAGS=-X 'main.Version=$(VERSION)' -X 'main.Commit=$(COMMIT)' -X 'main.Date=$(DATE)'
 
 test:
 	go test -count=1 -tags dev ./...
 
 # shortcut for local builds
 build: test
-	go build -o bin/$(APP) -ldflags="$(LDFLAGS)" *.go
+	go build -o build/$(APP) -ldflags="$(LDFLAGS)" *.go
 
 # Make releases in zip format intended for website downloads.
 releases: releaselinux releasefreebsd releasemac

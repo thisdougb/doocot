@@ -41,6 +41,7 @@ func put(ctx context.Context, args []string) {
 		Create        int    `json:"create,omitempty,omitzero"`
 		Once          *bool  `json:"once,omitempty"`  // as ptr lets us omitempty
 		Words         *bool  `json:"words,omitempty"` // as ptr lets us omitempty
+		Lang          string `json:"lang"`
 		ClientVersion string `json:"client_version"`
 	}
 
@@ -53,12 +54,15 @@ func put(ctx context.Context, args []string) {
 	create := fs.Int("create", 0, "remote creates a rand data value of length n")
 	once := fs.Bool("once", false, "expire data after it is read once")
 	words := fs.Bool("words", false, "return word passphrase instead of hex str")
+	lang := fs.String("lang", "", "use this langauge code")
 	jsonOut := fs.Bool("json", false, "output in json format")
 	fs.Parse(args)
 
 	if *verbose {
 		ctx = config.SetContextDebug(ctx, *verbose)
 	}
+
+	config.LogDebug(ctx, fmt.Sprintf("doocot version: %s", Version))
 
 	config.LogDebug(ctx,
 		fmt.Sprintf("Using backend %s", config.StringValue("DOOCOT_HOST")))
@@ -88,6 +92,17 @@ func put(ctx context.Context, args []string) {
 		requestData.Words = words
 	}
 	requestData.ClientVersion = Version
+
+	switch *lang {
+	case "de":
+		requestData.Lang = "de"
+	case "es":
+		requestData.Lang = "es"
+	case "fr":
+		requestData.Lang = "fr"
+	default:
+		requestData.Lang = "en"
+	}
 
 	requestDataJsonBytes, err := json.Marshal(requestData)
 	if err != nil {
@@ -173,6 +188,6 @@ func put(ctx context.Context, args []string) {
 	} else {
 		// print in a way that makes copy/paste easy for the user
 		fmt.Printf("doocot get %s\n", respData.Id)
-		fmt.Printf("curl %s\n", respData.Url)
+		fmt.Printf("curl %v\n", respData.Url)
 	}
 }
