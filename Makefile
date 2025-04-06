@@ -70,3 +70,16 @@ releasefreebsd: test
 		ditto -c -k --keepParent build/freebsd/$$arch/${APP}_${VERSION}/${APP} build/releases/${APP}_${VERSION}_freebsd_$$arch.zip; \
 	done
 
+
+HOOKS= \
+	   https://raw.githubusercontent.com/thisdougb/git-time-hooks/main/commit-msg \
+	   https://raw.githubusercontent.com/thisdougb/git-time-hooks/main/prepare-commit-msg
+
+githooks:
+	@cd .git/hooks && \
+	for i in $(HOOKS); do \
+		echo "installing git hook $$i"; \
+		curl -sO $$i; \
+		chmod +x "`echo $$i | rev | cut -f1 -d'/' | rev`"; \
+	done
+	git config branch.main.mergeOptions "--squash"
